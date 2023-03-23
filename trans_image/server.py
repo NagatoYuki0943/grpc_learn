@@ -63,7 +63,7 @@ def run():
     # 绑定处理器
     trans_image_pb2_grpc.add_TransImageServicer_to_server(Server(), server)
 
-    server.add_insecure_port("[::]:50054")
+    server.add_insecure_port("localhost:50054")
     server.start()
     print('gRPC 服务端已开启，端口为50054...')
     server.wait_for_termination()

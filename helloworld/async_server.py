@@ -25,7 +25,7 @@ async def serve():
     # 绑定处理器
     helloworld_pb2_grpc.add_GreeterServicer_to_server(Greeter(), server)
 
-    server.add_insecure_port("[::]:50054")
+    server.add_insecure_port("localhost:50054")
     await server.start()
     print('gRPC 服务端已开启，端口为50054...')
     await server.wait_for_termination()
