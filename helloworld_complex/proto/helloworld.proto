@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package helloworld;
+
+service Greeter{
+    // 进阶Demo
+    rpc GetDeptUser (GetDeptUserRequest) returns (GetDeptUserResponse) {}
+}
+
+// 复杂请求
+message GetDeptUserRequest {
+    uint32 dept_id = 1;             // 部门
+    string dept_name = 2;           // 部门名称
+    repeated uint32 uid_list = 3;   // 用户id列表
+    map<string, string> filter = 4; // 筛选条件
+}
+
+// 用户基本信息
+message BasicUser {
+    // 后面的 1 2 3代表顺序,顺序必须从1开始,并且不可重复
+    uint32 id = 1;
+    string name = 2;
+}
+
+// 复杂响应
+message GetDeptUserResponse {
+    repeated BasicUser user_list = 1;   // 用户列表
+    map<uint32, BasicUser> user_map = 2;// 用户map
+}
+
+// 在上级目录使用命令: python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. proto/helloworld.proto

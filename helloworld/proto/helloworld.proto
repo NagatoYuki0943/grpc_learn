@@ -1,0 +1,21 @@
+syntax = "proto3";
+
+package helloworld;
+
+service Greeter {
+    // 基础Demo
+    rpc SayHello (HelloRequest) returns (HelloResponse) {}
+}
+
+// 简单请求
+message HelloRequest {
+    // 后面的 1 2 3代表顺序,顺序必须从1开始,并且不可重复
+    string name = 1;
+}
+
+// 简单响应
+message HelloResponse {
+    string message = 1;
+}
+
+// 在上级目录使用命令: python -m grpc_tools.protoc -I./proto --python_out=. --grpc_python_out=. proto/helloworld.proto
