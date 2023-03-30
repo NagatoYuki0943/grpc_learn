@@ -20,14 +20,14 @@ def run():
     image_64 = base64.b64encode(image_encode)
 
     # 本次不使用SSL，所以channel是不安全的
-    channel = grpc.insecure_channel("localhost:50054")
-    # 客户端实例
-    stub = trans_image_pb2_grpc.TransImageStub(channel)
+    with grpc.insecure_channel("localhost:50054") as channel:
+        # 客户端实例
+        stub = trans_image_pb2_grpc.TransImageStub(channel)
 
-    #=================发送并接收新图片==================#
-    # trans是proto中service TransImage中的rpc trans
-    #                                                image是DataRquest中设定的变量
-    response = stub.trans(trans_image_pb2.DataRquest(image=image_64))
+        #=================发送并接收新图片==================#
+        # trans是proto中service TransImage中的rpc trans
+        #                                                image是DataRquest中设定的变量
+        response = stub.trans(trans_image_pb2.DataRquest(image=image_64))
 
     # 解码图片                                image是DataResponse中设定的变量
     image_decode = base64.b64decode(response.image)

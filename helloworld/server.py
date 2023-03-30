@@ -12,6 +12,7 @@ class Greeter(helloworld_pb2_grpc.GreeterServicer):
         """接收request,返回response
         SayHello是proto中service Greeter中的rpc SayHello
         """
+        print("request name is", request.name)
         #                                   message是HelloResponse中的参数            name是HelloRequest中的参数
         return helloworld_pb2.HelloResponse(message="hello,{msg}".format(msg=request.name))
 

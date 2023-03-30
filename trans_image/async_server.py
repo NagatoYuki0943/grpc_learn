@@ -61,7 +61,7 @@ async def run():
     server = grpc.aio.server(futures.ThreadPoolExecutor(max_workers=10),
                          options=[('grpc.max_send_message_length', 100 * 1024 * 1024),
                                   ('grpc.max_receive_message_length', 100 * 1024 * 1024)]
-                         )
+                        )
     # 绑定处理器
     trans_image_pb2_grpc.add_TransImageServicer_to_server(Server(), server)
 
