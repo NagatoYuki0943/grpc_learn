@@ -1,4 +1,7 @@
 import numpy as np
+import os
+import time
+import json
 import cv2
 import grpc
 import pickle
@@ -23,7 +26,9 @@ class Server(trans_image_pb2_grpc.TransImageServicer):
         # 再解码成图片 三维图片
         image_bgr = cv2.imdecode(array, cv2.IMREAD_COLOR)
         print("image shape:", image_bgr.shape)
-        cv2.imwrite("images/server_save.jpg", image_bgr)
+        # 保存图片
+        file_name = str(time.time())
+        cv2.imwrite(os.path.join("images", file_name + ".jpg"), image_bgr)
 
         #=====================修改图片=====================#
         cross = np.random.uniform(0, 1, image_bgr.shape)
@@ -39,11 +44,36 @@ class Server(trans_image_pb2_grpc.TransImageServicer):
 
         #=====================编码结果=====================#
         # 假设检测结果
-        detect = [
-            {"class_index": 0, "confidence": 0.9, "box": [1, 2, 100, 200]},
-            {"class_index": 1, "confidence": 0.8, "box": [100, 12, 300, 400]},
-            {"class_index": 1, "confidence": 0.7, "box": [102, 200, 300, 520]},
-        ]
+        detect = {
+            "image_size": [1080, 810, 3],
+            "detect": [
+                {
+                    "class_index": 0,
+                    "class": "person",
+                    "confidence": 0.8797998428344727,
+                    "box": [
+                        670,
+                        390,
+                        810,
+                        880
+                    ]
+                },
+                {
+                    "class_index": 0,
+                    "class": "person",
+                    "confidence": 0.8763597011566162,
+                    "box": [
+                        220,
+                        408,
+                        346,
+                        867
+                    ]
+                },
+            ]
+        }
+        # 保存检测结果
+        with open(os.path.join("images", file_name + ".json"), mode="w", encoding="utf-8") as f:
+            json.dump(detect, f, indent=4)
         # 使用pickle序列化预测结果
         pickle_detect = pickle.dumps(detect)
         # 编码
