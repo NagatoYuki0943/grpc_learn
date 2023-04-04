@@ -5,7 +5,7 @@ import time
 import pickle
 import os
 import json
-import trans_image_pb2
+import object_detect_pb2
 import xml.etree.ElementTree as ET
 import copy
 
@@ -15,11 +15,11 @@ os.makedirs(SERVER_SAVE_PATH, exist_ok=True)
 SAVE = True # 是否保存图片和xml
 
 
-def detect(request: trans_image_pb2.DataRquest):
+def detect(request: object_detect_pb2.Request):
     """检测
     """
     #=====================接收图片=====================#
-    # 解码图片                               image是DataRquest中设定的变量
+    # 解码图片                               image是Request中设定的变量
     image_decode = base64.b64decode(request.image)
     # 变成一个矩阵 单维向量
     array = np.frombuffer(image_decode, dtype=np.uint8)

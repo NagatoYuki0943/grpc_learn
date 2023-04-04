@@ -1,22 +1,22 @@
 import grpc
 from concurrent import futures
-import trans_image_pb2
-import trans_image_pb2_grpc
+import object_detect_pb2
+import object_detect_pb2_grpc
 import asyncio
 from funcs import detect
 
 
-class Server(trans_image_pb2_grpc.TransImageServicer):
-    async def trans(self, request: trans_image_pb2.DataRquest,
-                    context: grpc.aio.ServicerContext)-> trans_image_pb2.DataResponse:
+class Server(object_detect_pb2_grpc.YoloDetectServicer):
+    async def V5Detect(self, request: object_detect_pb2.Request,
+                    context: grpc.aio.ServicerContext)-> object_detect_pb2.Response:
         """接收request,返回response
-        trans是proto中service TransImage中的rpc trans
+        V5Detect是proto中service YoloDetectServicer V5Detect
         """
         image_64, detect_64 = detect(request)
 
         #==================返回图片和结果===================#
-        #                                   image和result是DataResponse中设定的变量
-        return trans_image_pb2.DataResponse(image=image_64, detect=detect_64)
+        #                                 image和detect是Response中设定的变量
+        return object_detect_pb2.Response(image=image_64, detect=detect_64)
 
 
 async def run():
@@ -27,7 +27,7 @@ async def run():
                                   ('grpc.max_receive_message_length', 100 * 1024 * 1024)]
                         )
     # 绑定处理器
-    trans_image_pb2_grpc.add_TransImageServicer_to_server(Server(), server)
+    object_detect_pb2_grpc.add_YoloDetectServicer_to_server(Server(), server)
 
     server.add_insecure_port("localhost:50054")
     await server.start()
