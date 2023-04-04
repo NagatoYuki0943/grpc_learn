@@ -1,1 +1,4 @@
 __pycache__
+
+trans_image/client/*
+trans_image/server/*
