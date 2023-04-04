@@ -6,6 +6,7 @@ package object_detect;
 service YoloDetect {
     // 函数定义 data_request参数 data_reply返回数据,这个就是在服务器要实现的方法了，是个函数
     rpc V5Detect (Request) returns (Response) {}
+    rpc V8Detect (Request) returns (Response) {} // 添加多个方法
 }
 
 //数据类型，其实我只要一个就可以了

@@ -20,6 +20,11 @@ class YoloDetectStub(object):
                 request_serializer=object__detect__pb2.Request.SerializeToString,
                 response_deserializer=object__detect__pb2.Response.FromString,
                 )
+        self.V8Detect = channel.unary_unary(
+                '/object_detect.YoloDetect/V8Detect',
+                request_serializer=object__detect__pb2.Request.SerializeToString,
+                response_deserializer=object__detect__pb2.Response.FromString,
+                )
 
 
 class YoloDetectServicer(object):
@@ -33,11 +38,22 @@ class YoloDetectServicer(object):
         context.set_details('Method not implemented!')
         raise NotImplementedError('Method not implemented!')
 
+    def V8Detect(self, request, context):
+        """Missing associated documentation comment in .proto file."""
+        context.set_code(grpc.StatusCode.UNIMPLEMENTED)
+        context.set_details('Method not implemented!')
+        raise NotImplementedError('Method not implemented!')
+
 
 def add_YoloDetectServicer_to_server(servicer, server):
     rpc_method_handlers = {
             'V5Detect': grpc.unary_unary_rpc_method_handler(
                     servicer.V5Detect,
+                    request_deserializer=object__detect__pb2.Request.FromString,
+                    response_serializer=object__detect__pb2.Response.SerializeToString,
+            ),
+            'V8Detect': grpc.unary_unary_rpc_method_handler(
+                    servicer.V8Detect,
                     request_deserializer=object__detect__pb2.Request.FromString,
                     response_serializer=object__detect__pb2.Response.SerializeToString,
             ),
@@ -64,6 +80,23 @@ class YoloDetect(object):
             timeout=None,
             metadata=None):
         return grpc.experimental.unary_unary(request, target, '/object_detect.YoloDetect/V5Detect',
+            object__detect__pb2.Request.SerializeToString,
+            object__detect__pb2.Response.FromString,
+            options, channel_credentials,
+            insecure, call_credentials, compression, wait_for_ready, timeout, metadata)
+
+    @staticmethod
+    def V8Detect(request,
+            target,
+            options=(),
+            channel_credentials=None,
+            call_credentials=None,
+            insecure=False,
+            compression=None,
+            wait_for_ready=None,
+            timeout=None,
+            metadata=None):
+        return grpc.experimental.unary_unary(request, target, '/object_detect.YoloDetect/V8Detect',
             object__detect__pb2.Request.SerializeToString,
             object__detect__pb2.Response.FromString,
             options, channel_credentials,

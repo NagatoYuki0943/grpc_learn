@@ -18,6 +18,15 @@ class Server(object_detect_pb2_grpc.YoloDetectServicer):
         #                                 image和detect是Response中设定的变量
         return object_detect_pb2.Response(image=image_64, detect=detect_64)
 
+    def V8Detect(self, request: object_detect_pb2.Request,
+                    context: grpc.ServicerContext)-> object_detect_pb2.Response:
+        """写的和V5的完全相同,用来测试多个方法
+        """
+        image_64, detect_64 = detect(request)
+
+        #==================返回图片和结果===================#
+        #                                 image和detect是Response中设定的变量
+        return object_detect_pb2.Response(image=image_64, detect=detect_64)
 
 def run():
     # 最大客户端连接10(max_workers=10)，这里可定义最大接收和发送大小(单位M)，默认只有4M
