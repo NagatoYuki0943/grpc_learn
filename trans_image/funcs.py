@@ -12,6 +12,7 @@ import copy
 
 SERVER_SAVE_PATH = "server"
 os.makedirs(SERVER_SAVE_PATH, exist_ok=True)
+SAVE = True # 是否保存图片和xml
 
 
 def detect(request: trans_image_pb2.DataRquest):
@@ -26,9 +27,6 @@ def detect(request: trans_image_pb2.DataRquest):
     # 再解码成图片 三维图片
     image_bgr = cv2.imdecode(array, cv2.IMREAD_COLOR)
     print("image shape:", image_bgr.shape)
-    # 保存图片
-    file_name = str(time.time())
-    cv2.imwrite(os.path.join(SERVER_SAVE_PATH, file_name + ".jpg"), image_bgr)
 
     #=====================修改图片=====================#
     cross = np.random.uniform(0, 1, image_bgr.shape)
@@ -90,8 +88,13 @@ def detect(request: trans_image_pb2.DataRquest):
             3
         ]
     }
-    # 保存检测结果
-    json2xml(detect, file_name)
+
+    #================保存图片和检测结果=================#
+    if SAVE:
+        file_name = str(time.time())
+        cv2.imwrite(os.path.join(SERVER_SAVE_PATH, file_name + ".jpg"), image_bgr)
+        json2xml(detect, file_name)
+
     # 使用pickle序列化预测结果
     pickle_detect = pickle.dumps(detect)
     # 编码
