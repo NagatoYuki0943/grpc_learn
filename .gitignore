@@ -1,4 +1,5 @@
 __pycache__
 
-predict_image/client/*
-predict_image/server/*
+*/client/*
+*/server/*
+predict_image1/*

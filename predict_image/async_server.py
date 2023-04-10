@@ -6,6 +6,9 @@ import asyncio
 from funcs import detect
 
 
+SERVER_HOST = "localhost:50054"
+
+
 class Server(object_detect_pb2_grpc.YoloDetectServicer):
     async def V5Detect(self, request: object_detect_pb2.Request,
                     context: grpc.aio.ServicerContext)-> object_detect_pb2.Response:
@@ -38,9 +41,9 @@ async def run():
     # 绑定处理器
     object_detect_pb2_grpc.add_YoloDetectServicer_to_server(Server(), server)
 
-    server.add_insecure_port("localhost:50054")
+    server.add_insecure_port(SERVER_HOST)
     await server.start()
-    print('gRPC 服务端已开启，端口为50054...')
+    print(f'gRPC 服务端已开启，地址为 {SERVER_HOST}...')
     await server.wait_for_termination()
 
 
