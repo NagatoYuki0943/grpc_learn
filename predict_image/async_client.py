@@ -3,7 +3,6 @@ import cv2
 import os
 import grpc
 import base64
-import pickle
 import json
 import object_detect_pb2
 import object_detect_pb2_grpc
@@ -33,9 +32,9 @@ async def run():
         stub = object_detect_pb2_grpc.YoloDetectStub(channel)
 
         #=================发送并接收新图片==================#
-        # proto中service YoloDetect中的rpc V5Detect V8Detect
+        # proto中service YoloDetect中的rpc v5_detect v8_detect
         #                                                        image是Request中设定的变量
-        response = await stub.V5Detect(object_detect_pb2.Request(image=image_64))
+        response = await stub.v5_detect(object_detect_pb2.Request(image=image_64))
 
     # 解码图片                                image是Response中设定的变量
     image_decode = base64.b64decode(response.image)
@@ -46,12 +45,11 @@ async def run():
     print(image.shape, image.dtype)
     cv2.imwrite(os.path.join(CLIENT_SAVE_PATH, "bus.jpg"), image)
 
-    # 解码检测结果                             detect是Response中设定的变量
-    detect_decode = base64.b64decode(response.detect)
-    detect_res = pickle.loads(detect_decode)
+    # 解码检测结果                detect是Response中设定的变量
+    detect = json.loads(response.detect)
     with open(os.path.join(CLIENT_SAVE_PATH, "detect.json"), mode="w", encoding="utf-8") as f:
-        json.dump(detect_res, f, indent=4)
-    print(detect_res)
+        json.dump(detect, f, indent=4)
+    print(detect)
 
 
 if __name__ == "__main__":

@@ -2,11 +2,11 @@ import numpy as np
 import cv2
 import base64
 import time
-import pickle
 import os
 import json
 import object_detect_pb2
 import xml.etree.ElementTree as ET
+from xml.etree.ElementTree import fromstring
 import copy
 
 
@@ -15,7 +15,7 @@ os.makedirs(SERVER_SAVE_PATH, exist_ok=True)
 SAVE = True # 是否保存图片和xml
 
 
-def detect(request: object_detect_pb2.Request):
+def detect(request: object_detect_pb2.Request) -> tuple[bytes, str]:
     """检测
     """
     #=====================接收图片=====================#
@@ -79,8 +79,8 @@ def detect(request: object_detect_pb2.Request):
             }
         ],
         "num": {
-            "person": 2,
-            "bus": 1
+            0: 2,
+            5: 1
         },
         "image_size": [
             1080,
@@ -95,12 +95,9 @@ def detect(request: object_detect_pb2.Request):
         cv2.imwrite(os.path.join(SERVER_SAVE_PATH, file_name + ".jpg"), image_bgr)
         json2xml(detect, file_name)
 
-    # 使用pickle序列化预测结果
-    pickle_detect = pickle.dumps(detect)
-    # 编码
-    detect_64 = base64.b64encode(pickle_detect)
+    detect_str = json.dumps(detect)
 
-    return image_64, detect_64
+    return image_64, detect_str
 
 
 def indent(elem, level=0):
@@ -122,22 +119,52 @@ def indent(elem, level=0):
             elem.tail = i
 
 
-with open("base.xml", mode="r", encoding="utf-8") as f:
-    tree = ET.parse(f)
+xml_string = """
+<annotation>
+	<folder>VOC2007</folder>
+	<filename>000001.jpg</filename>
+	<source>
+		<database>The VOC2007 Database</database>
+		<annotation>PASCAL VOC2007</annotation>
+		<image>flickr</image>
+		<flickrid>341012865</flickrid>
+	</source>
+	<owner>
+		<flickrid>Fried Camels</flickrid>
+		<name>Jinky the Fruit Bat</name>
+	</owner>
+	<size>
+		<width>353</width>
+		<height>500</height>
+		<depth>3</depth>
+	</size>
+	<segmented>0</segmented>
+	<object>
+		<name>dog</name>
+		<pose>Left</pose>
+		<truncated>1</truncated>
+		<difficult>0</difficult>
+		<bndbox>
+			<xmin>48</xmin>
+			<ymin>240</ymin>
+			<xmax>195</xmax>
+			<ymax>371</ymax>
+		</bndbox>
+	</object>
+</annotation>
+"""
+root = fromstring(xml_string)
+# 获取临时object
+base_object = copy.deepcopy(root.find("object"))
 
 
 def json2xml(data: dict, file_name: str):
     """将检测的json转换为xml并保存
 
     Args:
-        data (dict): json数据
-        path (str): 保存路径
-        file_name (str): 文件名
+        data (dict):      json数据
+        file_name (str):  文件名
     """
-    root = tree.getroot()
-    # 获取临时object
-    base_object = copy.deepcopy(root.find("object"))
-
     # 删除全部的object
     for o in root.findall("object"):
         root.remove(o)
